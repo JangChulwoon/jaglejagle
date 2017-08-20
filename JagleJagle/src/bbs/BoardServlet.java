@@ -251,7 +251,7 @@ public class BoardServlet extends HttpServlet {
 		} else if (uri.indexOf("reple_ok.do") != -1) {
 			// System.out.println("created !!!!!");
 			// req.setCharacterEncoding("utf-8");
-			repleDTO dto = new repleDTO();
+			DTO.repleDTO dto = new DTO.repleDTO();
 			// System.out.println("@@@ = " + req.getAttribute("replecontent"));
 			System.out.println("체크확인" + req.getParameter("replecontent"));
 			dto.setContents(req.getParameter("replecontent"));
@@ -295,13 +295,13 @@ public class BoardServlet extends HttpServlet {
 			dataCount = dao.repleCount();
 
 			// 리스트
-			List<repleDTO> list;
+			List<DTO.repleDTO> list;
 			list = dao.listReple(dto.getIdx());
 
 			int listNum, n = 0;
-			Iterator<repleDTO> it = list.iterator();
+			Iterator<DTO.repleDTO> it = list.iterator();
 			while (it.hasNext()) {
-				repleDTO Rdto = it.next();
+				DTO.repleDTO Rdto = it.next();
 				listNum = dataCount;
 				// dto.setIdx(listNum);
 				n++;
