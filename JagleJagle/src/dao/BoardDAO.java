@@ -7,10 +7,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import DTO.BoardDTO;
 import DTO.repleDTO;
 import DTO.imgDTO;
-import DTO.UserDTO;
 import dbconfig.DBInit;
 
 public class BoardDAO {
