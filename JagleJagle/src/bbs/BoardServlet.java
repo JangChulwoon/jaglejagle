@@ -1,10 +1,7 @@
 package bbs;
 
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.SQLException;
@@ -24,16 +21,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
-import com.oreilly.servlet.MultipartRequest;
-import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
-import java.util.*;
-import java.io.*;
-
 
 import DTO.BoardDTO;
 import DTO.imgDTO;
-import DTO.repleDTO;
-import DTO.UserDTO;
 import dao.BoardDAO;
 import util.MyUtil;
 
@@ -99,7 +89,7 @@ public class BoardServlet extends HttpServlet {
 			int currentPool = 2;
 			if (Pool != null)
 				currentPool = Integer.parseInt(Pool);
-			
+
 			// 게시물 리스트
 			String pageNum = req.getParameter("pageNum");
 			int current_page = 1;
@@ -108,7 +98,7 @@ public class BoardServlet extends HttpServlet {
 
 			String searchKey = req.getParameter("searchKey");
 			String searchValue = req.getParameter("searchValue");
-			//System.out.println("search value : " + searchValue);
+			// System.out.println("search value : " + searchValue);
 			if (searchKey == null) {
 				searchKey = "title";
 				searchValue = "";
@@ -118,10 +108,9 @@ public class BoardServlet extends HttpServlet {
 			}
 			// 전체 데이터 개수 구하기
 			int dataCount;
-			if (searchValue.length() != 0){
-				dataCount = dao.dataCount(searchKey, searchValue,currentPool);
-			}
-			else
+			if (searchValue.length() != 0) {
+				dataCount = dao.dataCount(searchKey, searchValue, currentPool);
+			} else
 				dataCount = dao.dataCount(currentPool);
 
 			int numPerPage = 10;// 한 페이지에 표시할 데이터 개수
@@ -132,45 +121,45 @@ public class BoardServlet extends HttpServlet {
 
 			int start = (current_page - 1) * numPerPage + 1;
 			int end = current_page * numPerPage;
-			
-//			//주간 인기글
-//			List<BoardDTO> popList;
-//			
-//			String Pkind =  req.getParameter("sort");
-//			//System.out.println("Test  :: "+Pkind);
-//		
-//				popList = dao.listPop(start - 1, end);
-//				int rank = 1;
-//			// 리스트 글번호 만들기
-//			int PlistNum, pNum = 0;
-//			Iterator<BoardDTO> Pit = popList.iterator();
-//			while (Pit.hasNext()) {
-//				BoardDTO dto = Pit.next();
-//				PlistNum = dataCount - (start + pNum - 1);
-//				//dto.setIdx(listNum);
-//				pNum++;
-//			}
 
-			//리스트
+			// //주간 인기글
+			// List<BoardDTO> popList;
+			//
+			// String Pkind = req.getParameter("sort");
+			// //System.out.println("Test :: "+Pkind);
+			//
+			// popList = dao.listPop(start - 1, end);
+			// int rank = 1;
+			// // 리스트 글번호 만들기
+			// int PlistNum, pNum = 0;
+			// Iterator<BoardDTO> Pit = popList.iterator();
+			// while (Pit.hasNext()) {
+			// BoardDTO dto = Pit.next();
+			// PlistNum = dataCount - (start + pNum - 1);
+			// //dto.setIdx(listNum);
+			// pNum++;
+			// }
+
+			// 리스트
 			List<BoardDTO> list;
-			
-			String kind =  req.getParameter("sort");
-			//System.out.println("Test  :: "+kind);
-			
+
+			String kind = req.getParameter("sort");
+			// System.out.println("Test :: "+kind);
+
 			if (searchValue.length() != 0)
-				//list = dao.listBoard(start, end, searchKey, searchValue);
-				list = dao.listBoard(start-1, end, searchKey, searchValue, currentPool);
-				
+				// list = dao.listBoard(start, end, searchKey, searchValue);
+				list = dao.listBoard(start - 1, end, searchKey, searchValue, currentPool);
+
 			else
-				//list = dao.listBoard(start - 1, end);
-				list = dao.listBoard(start -1 , end,kind, currentPool);
+				// list = dao.listBoard(start - 1, end);
+				list = dao.listBoard(start - 1, end, kind, currentPool);
 			// 리스트 글번호 만들기
 			int listNum, n = 0;
 			Iterator<BoardDTO> it = list.iterator();
 			while (it.hasNext()) {
 				BoardDTO dto = it.next();
 				listNum = dataCount - (start + n - 1);
-				//dto.setIdx(listNum);
+				// dto.setIdx(listNum);
 				n++;
 			}
 			// 페이징 처리
@@ -180,8 +169,8 @@ public class BoardServlet extends HttpServlet {
 				params = "searchKey =" + searchKey + "&searchValue=" + searchValue;
 			}
 
-			String listUrl = cp + "/bbs/list.do"+"?"+currentPool;
-			String articleUrl = cp + "/bbs/article.do?Pool="+currentPool+"&pageNum=" + current_page;
+			String listUrl = cp + "/bbs/list.do" + "?" + currentPool;
+			String articleUrl = cp + "/bbs/article.do?Pool=" + currentPool + "&pageNum=" + current_page;
 			// String articleUrl = cp+"/bbs/article.do?pageNum="+current_page;
 			if (params.length() != 0) {
 				listUrl += "?" + params;
@@ -189,9 +178,7 @@ public class BoardServlet extends HttpServlet {
 			}
 
 			String pageIndexList = myUtil.pageIndexList(current_page, total_page, listUrl);
-			
-			
-			
+
 			req.setAttribute("list", list);
 			req.setAttribute("pageIndexList", pageIndexList);
 			// req.setAttribute("idx", idx);
@@ -200,10 +187,10 @@ public class BoardServlet extends HttpServlet {
 			req.setAttribute("dataCount", dataCount);
 			req.setAttribute("articleUrl", articleUrl);
 			req.setAttribute("currentPool", currentPool);
-			
+
 			forward(req, resp, "/view/market_bbs/list.jsp");
 
-		} else if (uri.indexOf("created.do") != -1){
+		} else if (uri.indexOf("created.do") != -1) {
 			// 입력 폼
 			int Pool = Integer.parseInt(req.getParameter("Pool"));
 			req.setAttribute("mode", "created");
@@ -211,8 +198,8 @@ public class BoardServlet extends HttpServlet {
 			forward(req, resp, "/view/market_bbs/created.jsp");
 		} else if (uri.indexOf("created_ok.do") != -1) {
 			// System.out.println("created !!!!!");
-			//System.out.println(req.getParameter("Pool"));
-			//int Pool = Integer.parseInt(req.getParameter("Pool"));
+			// System.out.println(req.getParameter("Pool"));
+			// int Pool = Integer.parseInt(req.getParameter("Pool"));
 			BoardDTO dto = new BoardDTO();
 			imgDTO idto = new imgDTO();
 
@@ -223,55 +210,56 @@ public class BoardServlet extends HttpServlet {
 			String uploadPath = context.getRealPath("image");
 			int size = 10 * 1024 * 1024;
 			MultipartRequest multi = null;
-			
-			
+
 			multi = new MultipartRequest(req, uploadPath, size, "utf-8", new DefaultFileRenamePolicy());
 			int Pool = Integer.parseInt(multi.getParameter("Pool"));
-			//System.out.println("Pool : "+Pool);
-			Vector vec = new Vector();		
-            Enumeration files = multi.getFileNames();
-            int i = 0;
-            while(files.hasMoreElements()){
-            	String name = (String)files.nextElement();
-            	vec.add(name);
-            }
-           
-            String[] formName= new String[vec.size()];
-            vec.copyInto(formName);
-            Arrays.sort(formName);
-            filename = multi.getFilesystemName(formName[0]); 
-        	System.out.println("filename : " + filename);
-           
-            filePath = "/image/" + filename; 
-			//filePath = uploadPath + "\\" + filename;
-        	
+			// System.out.println("Pool : "+Pool);
+			Vector vec = new Vector();
+			Enumeration files = multi.getFileNames();
+			int i = 0;
+			while (files.hasMoreElements()) {
+				String name = (String) files.nextElement();
+				vec.add(name);
+			}
+
+			String[] formName = new String[vec.size()];
+			vec.copyInto(formName);
+			Arrays.sort(formName);
+			filename = multi.getFilesystemName(formName[0]);
+			System.out.println("filename : " + filename);
+
+			filePath = "/image/" + filename;
+			// filePath = uploadPath + "\\" + filename;
+
 			dto.setTitle(multi.getParameter("title"));
 			dto.setContents(multi.getParameter("contents"));
-			if(Pool==2)
+			if (Pool == 2)
 				dto.setPrice(Integer.parseInt(multi.getParameter("price")));
 			dto.setBoard_Pool_idx(Pool);
-		
+
 			dao.insertBoard(dto);
-			
+
 			idto.setPath(filePath);
-			idto.setBoard_idx(dao.idxGet()+1);
+			idto.setBoard_idx(dao.idxGet() + 1);
 			idto.setBoard_Board_Pool_idx(Pool);
 			idto.setBoard_User_idx(1);
-			System.out.println(idto.getBoard_idx()+" "+idto.getBoard_Board_Pool_idx()+" "+ idto.getBoard_User_idx());
-		
+			System.out.println(
+					idto.getBoard_idx() + " " + idto.getBoard_Board_Pool_idx() + " " + idto.getBoard_User_idx());
+
 			dao.insertImg(idto);
-			resp.sendRedirect(cp + "/bbs/list.do?Pool="+Pool);
-		}else if (uri.indexOf("reple_ok.do") != -1) {
+			resp.sendRedirect(cp + "/bbs/list.do?Pool=" + Pool);
+		} else if (uri.indexOf("reple_ok.do") != -1) {
 			// System.out.println("created !!!!!");
-			//req.setCharacterEncoding("utf-8");
+			// req.setCharacterEncoding("utf-8");
 			repleDTO dto = new repleDTO();
-			//System.out.println("@@@ = " + req.getAttribute("replecontent"));
-			System.out.println("체크확인"+req.getParameter("replecontent"));
+			// System.out.println("@@@ = " + req.getAttribute("replecontent"));
+			System.out.println("체크확인" + req.getParameter("replecontent"));
 			dto.setContents(req.getParameter("replecontent"));
 			dao.insertReple(dto, req.getParameter("b_idx"), req.getParameter("Pool"));
 			dao.minusView(Integer.parseInt(req.getParameter("b_idx")));
-			resp.sendRedirect(cp + "/bbs/article.do?Pool="+req.getParameter("Pool")+"&pageNum="+req.getParameter("PageNum")+"&idx="+req.getParameter("b_idx"));
-		}else if (uri.indexOf("article.do") != -1) {
+			resp.sendRedirect(cp + "/bbs/article.do?Pool=" + req.getParameter("Pool") + "&pageNum="
+					+ req.getParameter("PageNum") + "&idx=" + req.getParameter("b_idx"));
+		} else if (uri.indexOf("article.do") != -1) {
 			// 게시물 보기
 			int idx = Integer.parseInt(req.getParameter("idx"));
 			int Pool = Integer.parseInt(req.getParameter("Pool"));
@@ -299,38 +287,38 @@ public class BoardServlet extends HttpServlet {
 			dto.setContents(dto.getContents().replaceAll("\n", "</br>"));
 
 			// 댓글
-			
+
 			if (req.getMethod().equalsIgnoreCase("GET")) {
 				searchValue = URLDecoder.decode(searchValue, "UTF-8");
 			}
 			int dataCount;
 			dataCount = dao.repleCount();
 
-			//리스트
+			// 리스트
 			List<repleDTO> list;
 			list = dao.listReple(dto.getIdx());
-			
+
 			int listNum, n = 0;
 			Iterator<repleDTO> it = list.iterator();
 			while (it.hasNext()) {
 				repleDTO Rdto = it.next();
 				listNum = dataCount;
-				//dto.setIdx(listNum);
+				// dto.setIdx(listNum);
 				n++;
 			}
-			
+
 			String params = "pageNum=" + pageNum;
 			if (!searchValue.equals("")) {
 				params += "&searchKey=" + searchKey + "&searchValue" + URLEncoder.encode(searchValue, "utf-8");
 			}
-			
+
 			req.setAttribute("Pool", Pool);
 			req.setAttribute("dto", dto);
 			req.setAttribute("Idto", Idto);
 			req.setAttribute("pageNum", pageNum);
 			req.setAttribute("params", params);
 			req.setAttribute("list", list);
-			//req.setAttribute("Ilist", Ilist);
+			// req.setAttribute("Ilist", Ilist);
 			req.setAttribute("dataCount", dataCount);
 
 			forward(req, resp, "/view/market_bbs/article.jsp");
@@ -349,11 +337,10 @@ public class BoardServlet extends HttpServlet {
 			req.setAttribute("mode", "update");
 			req.setAttribute("dto", dto);
 			req.setAttribute("pageNum", pageNum);
-		
 
 			forward(req, resp, "/view/market_bbs/created.jsp");
 		} else if (uri.indexOf("update_ok.do") != -1) {
-			
+
 			BoardDTO dto = new BoardDTO();
 			String filename;
 			String uploadPath = "C:\\Users\\cokto\\Desktop\\crossit";
@@ -376,8 +363,8 @@ public class BoardServlet extends HttpServlet {
 				// 예외처리
 				e.printStackTrace();
 			}
-			
-			//BoardDTO dto = new BoardDTO();
+
+			// BoardDTO dto = new BoardDTO();
 			String idx = multi.getParameter("idx");
 
 			dto.setIdx(Integer.parseInt(multi.getParameter("idx")));
@@ -389,12 +376,12 @@ public class BoardServlet extends HttpServlet {
 		} else if (uri.indexOf("delete.do") != -1) {
 			int num = Integer.parseInt(req.getParameter("idx"));
 			int pageNum = Integer.parseInt(req.getParameter("pageNum"));// **********
-			//String Pool = req.getParameter("Pool");
-			int Pool = Integer.parseInt(req.getParameter("Pool")); 
-			//System.out.println(Pool);
+			// String Pool = req.getParameter("Pool");
+			int Pool = Integer.parseInt(req.getParameter("Pool"));
+			// System.out.println(Pool);
 			dao.deleteBoard(num);
 
-			resp.sendRedirect(cp + "/bbs/list.do?Pool="+Pool+"&PageNum="+pageNum);
+			resp.sendRedirect(cp + "/bbs/list.do?Pool=" + Pool + "&PageNum=" + pageNum);
 		} else if (uri.indexOf("recommand.do") != -1) {
 			int num = Integer.parseInt(req.getParameter("idx"));
 			String idx = req.getParameter("idx");// **********
@@ -403,8 +390,8 @@ public class BoardServlet extends HttpServlet {
 
 			dao.updateRecommand(num);
 
-			resp.sendRedirect(cp + "/bbs/article.do?Pool="+Pool+"&pageNum=" + pageNum+"&idx="+idx);
+			resp.sendRedirect(cp + "/bbs/article.do?Pool=" + Pool + "&pageNum=" + pageNum + "&idx=" + idx);
 		}
-		
+
 	}
 }
